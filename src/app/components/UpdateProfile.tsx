@@ -6,10 +6,11 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import {Select} from 'antd'
 import { useEffect, useState } from 'react';
+import CustomerInterface from '../interfaces/CustomerInterface';
+import dayjs from 'dayjs';
 type FieldType = {
     name?:string;
-    email?: string;
-    password?: string;
+    // email?: string;
     dateOfBirth?: Date;
     province?: string;
     district?:string;
@@ -17,7 +18,7 @@ type FieldType = {
     phonenumber?: string;
 };
 
-export default function Singup() {
+export default function UpdateProfile({customerInfo, setUpdatedProfile}: {customerInfo: CustomerInterface, setUpdatedProfile: any}) {
     const [cities, setCities] = useState<any>()
     const [districts, setDistricts] = useState<any>();
     const [wards, setWards] = useState<any>();
@@ -55,37 +56,42 @@ export default function Singup() {
         console.log('Success:', values.dateOfBirth?.toISOString());
         console.log(values);
         const body = {
-            dateOfBirth: values.dateOfBirth?.toISOString(),
-            email: values.email,
-            password: values.password,
-            name: values.name,
-            phonenumber: values.phonenumber,
+            dateOfBirth: values.dateOfBirth?.toISOString() || new Date(customerInfo.dateOfBirth).toISOString(),
+            // email: values.email,
+            name: values.name || customerInfo.name,
+            phonenumber: values.phonenumber || customerInfo.phone,
             address: `${selectedProvince}, ${selectedDistrict}, ${selectedWard}`
         }
-        try {
-            const data = await http.postWithAutoRefreshToken(`signup`, body, {useAccessToken:false});
-            console.log(data);
-            router.push('/login');
+        console.log(customerInfo);
+        if (body.address.includes("undefined")){
+            body.address = customerInfo.address;
         }
-        catch (e) {
-            if (e instanceof AxiosError){
-                switch (e.response?.status){
-                    case 422: {
-                        console.log(e);
-                        break
-                    }
-                    case 409: {
-                        alert("Tai khoan da ton tai")
-                    }
-                }
-            }
-        }
+        
+        setUpdatedProfile({...body})
+        // try {
+        //     const data = await http.postWithAutoRefreshToken(`signup`, body, {useAccessToken:false});
+        //     console.log(data);
+        //     router.push('/login');
+        // }
+        // catch (e) {
+        //     if (e instanceof AxiosError){
+        //         switch (e.response?.status){
+        //             case 422: {
+        //                 console.log(e);
+        //                 break
+        //             }
+        //             case 409: {
+        //                 alert("Tai khoan da ton tai")
+        //             }
+        //         }
+        //     }
+        // }
     };
       
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-
+    console.log(customerInfo.address.split(', ')[0])
     return (
         <>
             <Form
@@ -98,49 +104,43 @@ export default function Singup() {
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
             >
-            <Form.Item<FieldType>
+            {/* <Form.Item<FieldType>
                     label="Email"
                     name="email"
                     rules={[{ type:"email", required: true, message: 'Please input your username!' }]}
             >
-                    <Input />
-            </Form.Item>
+                    <Input defaultValue={customerInfo.email}/>
+            </Form.Item> */}
 
-            <Form.Item<FieldType>
-                label="Password"
-                name="password"
-                rules={[{ required: true, message: 'Please input your password!'}, {pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, message: "It nhat 8 ky tu, 1 chu cai in hoa, 1 chu cai in thuong, 1 so, 1 ky tu dac biet"}]}
-            >
-                <Input.Password />
-            </Form.Item>
             <Form.Item<FieldType>
                 label="Name"
                 name="name"
-                rules={[{ required: true, message: 'Please input your name' }, {pattern: /[\p{L}\s]*$/, message: "Ten khong hop le"}]}
+                rules={[{pattern: /[\p{L}\s]*$/, message: "Ten khong hop le"}]}
             >
-                <Input/>
+                <Input defaultValue={customerInfo.name}/>
             </Form.Item>
             <Form.Item<FieldType>
                 label="Phonenumber"
                 name="phonenumber"
-                rules={[{ required: true, message: 'Please input your phonenumber' }, {pattern: /\d{10}/, message: "So dien thoai khong hop le"}]}
+                rules={[{pattern: /\d{10}/, message: "So dien thoai khong hop le"}]}
             >
-                <Input />
+                <Input defaultValue={customerInfo.phone}/>
             </Form.Item>
             <Form.Item<FieldType>
                 label="Date of Birth"
                 name="dateOfBirth"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                // rules={[{ required: true, message: 'Please input your !' }]}
             >
-                <DatePicker></DatePicker>
+                <DatePicker defaultValue={(dayjs(customerInfo.dateOfBirth))}></DatePicker>
             </Form.Item>
+
             <Form.Item<FieldType>
                 label="Province"
                 name="province"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                // rules={[{ required: true, message: 'Please input your !' }]}
             >
                 {/* City */}
-                <Select onChange={(value) => getDistrict(value)}>
+                <Select onChange={(value) => getDistrict(value)} defaultValue={customerInfo.address.split(', ')[0]}>
                     {!(cities) || cities.map((city:any) => {
                         return (
                             <Select.Option value= {`${city.province_id}&${city.province_name}`} key={city.province_id}>
@@ -153,10 +153,10 @@ export default function Singup() {
             <Form.Item<FieldType>
                 label="District"
                 name="district"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                // rules={[{ required: true, message: 'Please input your !' }]}
             >
                 {/* District */}
-                <Select onChange={(value) => getWards(value)}>
+                <Select onChange={(value) => getWards(value)} defaultValue={customerInfo.address.split(', ')[1]}>
                     {!(districts) || districts.map((district:any) => {
                         return (
                             <Select.Option value= {`${district.district_id}&${district.district_name}`} key={district.district_id}>
@@ -169,10 +169,10 @@ export default function Singup() {
             <Form.Item<FieldType>
                 label="Ward"
                 name="ward"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                // rules={[{ required: true, message: 'Please input your !' }]}
             >
                 {/* Ward */}
-                <Select onChange={(value) => setSelectedWard(value)}>
+                <Select onChange={(value) => setSelectedWard(value)} defaultValue={customerInfo.address.split(', ')[2]}>
                     {!(wards) || wards.map((ward:any) => {
                         return (
                             <Select.Option value= {`${ward.ward_name}`} key={ward.ward_id}>
@@ -184,10 +184,10 @@ export default function Singup() {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
-                    Submit
+                    Confirm
             </Button>
             </Form.Item>
-    </Form>
+        </Form>
         </>
     )
 }

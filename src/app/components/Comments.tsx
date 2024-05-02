@@ -20,6 +20,7 @@ export default function Comments({bookId}: {bookId:string}){
     const [commentId, setCommentId] = useState<string>("");
     const [value, setValue] = useState('');
     const {id} = useContext(UserContext);
+    console.log(id);
     const [open, setOpen] = useState(false);
     const showModal = () => {
         setOpen(true);

@@ -62,6 +62,7 @@ class HTTP {
             return result.data;
         } catch (error) {
             try {
+                console.log("refreshToken");
                 // @ts-ignore
                 if (error.response && error.response.status === 401) {
                     await this._handleRefreshToken();

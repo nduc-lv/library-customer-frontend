@@ -3,7 +3,7 @@ interface CustomerInterface {
     name: string,
     phone: string,
     email: string,
-    dateOfBirth: Date,
+    dateOfBirth: string,
     address: string
 }
 

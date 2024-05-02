@@ -4,15 +4,18 @@ import CustomerInterface from "../interfaces/CustomerInterface";
 import http from "../utils/http";
 export const UserContext = createContext({
     id: "",
-    setState: (state:any) => {}
+    setState: (state:any) => {},
+    getCustomerId: (accessToken: string) => {}
 });
 export function UserProvider({children}: any) {
     const [id, setId] = useState<string>(""); 
     const [state, setState] = useState<boolean>(false);
     const getCustomerId = async (accessToken: string) => {
         try {
+            console.log("get id first");
             const data = await http.getWithAutoRefreshToken("/getCustomerId", {useAccessToken:true});
             setId(curr => data.customerId);
+            console.log(data);
         }
         catch (e) {
             console.log(e);
@@ -34,7 +37,7 @@ export function UserProvider({children}: any) {
     // call api to set interests
     return (
         <UserContext.Provider value ={
-            {id, setState}
+            {id, setState, getCustomerId}
         }>
             {children}
         </UserContext.Provider> 

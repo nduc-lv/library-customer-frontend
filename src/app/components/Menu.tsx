@@ -1,6 +1,6 @@
 'use client'
 
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
@@ -55,12 +55,28 @@ const items: MenuItem[] = [
 
 export default function MenuComp() {
     const [current, setCurrent] = useState('mail');
-    const {id} = useContext(UserContext);
+    const {getCustomerId, id} = useContext(UserContext);
+    // useEffect(() => {
+    //   try {
+    //     const accessToken = localStorage.get("accessToken");
+    //     if (!accessToken) {
+    //       console.log("AccessToken null");
+    //     }
+    //     else {
+    //       if (!id){
+    //         getCustomerId(accessToken)
+    //       }
+    //     }
+    //   }
+    //   catch (e) {
+    //     console.log(e);
+    //   }
+    // }, [])
+    console.log(id);
     const onClick: MenuProps['onClick'] = (e) => {
             console.log('click ', e);
             setCurrent(e.key);
     };
-    console.log(id);
 
   return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />;
 };
