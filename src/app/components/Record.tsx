@@ -8,7 +8,9 @@ import { InputNumberProps } from "antd";
 import http from "../utils/http";
 import { AxiosError } from "axios";
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import {Card} from "antd";
 const {confirm} = Modal;
+const {Meta} = Card
 export default function Record({record, update}: {record: RecordInterface, update:any}){
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -38,7 +40,10 @@ export default function Record({record, update}: {record: RecordInterface, updat
         }
         catch (e){
             if (e instanceof AxiosError){
-                if (e.response?.data?.status == -1){
+                if (e.response?.status == 404) {
+                    alert("Not found")
+                }
+                else if (e.response?.status == 406) {
                     alert("Het sach")
                 }
             }
@@ -73,8 +78,8 @@ export default function Record({record, update}: {record: RecordInterface, updat
           },
     });}
     return (
-        <>
-            <div>
+        <div style={{marginBottom: 50}}>
+            {/* <div>
                 {record.book.name}
             </div>
             <div>
@@ -91,28 +96,62 @@ export default function Record({record, update}: {record: RecordInterface, updat
             </div>
             {record.status == 'Đặt cọc' ? (
                 <div>
-                    <Button onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chinh sua</Button>
-                    <Button onClick={() => {showDeleteConfirm(record)}}>Delete Reservation</Button> 
+                    <Button onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
+                    <Button onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
+                </div>
+            ) :
+            <></>} */}
+             <Card
+                hoverable
+                style={{display: "flex", flexDirection: "row"}}
+                cover={<img alt={record.book.name} src={record.book.image} style={{width: 200}}/>}
+            >
+                <Meta title={record.book.name} />
+                <div style={{width: "40vw"}}>
+                    <div style={{marginTop: 10, width: "60%"}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Tác giả: </span> {record.book.authors.map((author) => author.name).join(", ")} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    </div>
+                    <div style={{marginTop: 10}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Thể loại: </span> {record.book.genres.map((genre) => genre.name).join(", ")}
+                    </div>
+                    <div style={{marginTop: 10}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Trạng thái: </span> {record.status == "Đặt cọc" ? "Đặt trước" : record.status}
+                    </div>
+                    <div style={{marginTop: 10}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Số lượng đặt: </span> {record.numberOfBooks} cuốn
+                    </div>
+                    <div style={{marginTop: 10}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Ngày đặt: </span> {new Date(record.timeStart).toLocaleDateString()}
+                    </div>
+                    <div style={{marginTop: 10}} className="truncate">
+                        <span style={{fontWeight: "bold"}}>Hạn lấy sách: </span> {new Date(record.timeEnd).toLocaleDateString()}
+                    </div>
+                </div>
+                {record.status == 'Đặt cọc' ? (
+                <div style={{marginTop: 10}} className="flex gap-2">
+                    <Button onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
+                    <Button onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
                 </div>
             ) :
             <></>}
+            </Card>
             <Modal
                             open={open}
-                            title="Title"
+                            title="Sửa số lượng"
                             onOk={() => {handleOk(record)}}
                             onCancel={handleCancel}
                             footer={[
                                 <Button key="back" onClick={handleCancel}>
-                                  Return
+                                  Hủy
                                 </Button>,
                                 <Button disabled={(numberOfBooks == record.numberOfBooks)} key="submit" type="primary" loading={loading} onClick={() => {handleOk(record)}}>
-                                  Submit
+                                  Xác nhận
                                 </Button>
                             ]}
                             
                         >
                             <InputNumber type="number" onChange={onChange} defaultValue={numberOfBooks} min={1} max = {record.book.quantity}></InputNumber>
             </Modal>
-        </>
+        </div>
     )
 }

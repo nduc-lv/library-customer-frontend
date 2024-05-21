@@ -6,7 +6,9 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import { UserContext } from '../context/CustomerContext';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {Card} from "antd"
 type FieldType = {
     username?: string;
     password?: string;
@@ -32,11 +34,12 @@ export default function Login() {
             if (e instanceof AxiosError){
                 switch (e.response?.status){
                     case 404: {
-                        alert("Tai khoan khong ton tai")
+                        toast("Tài khoản không tồn tại", {type:"error"})
                         break
                     }
                     case 403: {
-                        alert("Sai mat khau")
+                        toast("Sai mật khẩu", {type:"error"})
+                        break
                     }
                 }
             }
@@ -48,29 +51,33 @@ export default function Login() {
     };
     
     return (
-        <>
+        <div className='flex flex-col items-center justify-center' style={{padding: 100}}>
+            <ToastContainer></ToastContainer>
+            <div style={{fontWeight: "bold", marginBottom: 10}}>
+                Đăng nhập
+            </div>
             <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    style={{ maxWidth: 600 }}
+                    style={{ maxWidth: 600}}
                     initialValues={{ remember: true }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
             >
             <Form.Item<FieldType>
-                    label="Username"
+                    label="Email"
                     name="username"
-                    rules={[{ type:"email", required: true, message: 'Please input your username!' }]}
+                    rules={[{ type:"email", required: true, message: 'Email không đúng định dạng' }]}
             >
                     <Input />
             </Form.Item>
 
             <Form.Item<FieldType>
-                label="Password"
+                label="Mật khẩu"
                 name="password"
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: 'Mật khẩu không được để trống' }]}
             >
                 <Input.Password />
             </Form.Item>
@@ -78,11 +85,17 @@ export default function Login() {
    
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-                    Submit
+            <Button type="primary" htmlType="submit" style={{marginTop: 10}}>
+                    Đăng nhập
             </Button>
-            </Form.Item>
+            {/* <Button type='primary' onCLick = {() => {}}>
+                Quên mật khẩu
+            </Button> */}
+            </Form.Item>   
     </Form>
-        </>
+            <div className='underline cursor-pointer' style={{fontSize: 13, color: "gray"}} onClick={() => {router.push("/forgotPassword")}}>
+                Quên mật khẩu
+            </div>
+        </div>
     )
 }

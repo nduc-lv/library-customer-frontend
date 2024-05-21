@@ -25,7 +25,7 @@ export default function SearchPage(){
     };
     const getBooks = async () => {
         try{
-            const data = await http.getWithAutoRefreshToken(`/search?q=${query}&page=${currPage}&limit=1`, {useAccessToken: false});
+            const data = await http.getWithAutoRefreshToken(`/search?q=${query}&page=${currPage}&limit=10`, {useAccessToken: false});
             console.log(data)
             setLoading(curr => false);
             setBooks([...data.books]);
@@ -54,7 +54,9 @@ export default function SearchPage(){
             {/* Display results */}
             <Books books={books}></Books>
             {/* pagination */}
-            {(!books) || <Pagination current={currPage} total={totalPages * 10} onChange={onChangePage}></Pagination>}
+            <div className="flex justify-center items-center">
+                {(!books) || (books.length == 0) || <Pagination current={currPage} total={totalPages * 10} onChange={onChangePage}></Pagination>}
+            </div>
         </>
     )
 }

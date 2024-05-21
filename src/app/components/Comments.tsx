@@ -10,6 +10,10 @@ import { UserContext } from '../context/CustomerContext';
 const { TextArea } = Input;
 import { Modal, Space } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
+import {Card} from 'antd'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const { confirm } = Modal;
 export default function Comments({bookId}: {bookId:string}){
     const [comments, setComments] = useState<Array<CommentInterface>>();
@@ -63,10 +67,10 @@ export default function Comments({bookId}: {bookId:string}){
       };
     const postComment = async () => {
         if (!id){
-            alert("Dang nhap")
+            toast("Đăng nhập để bình luận về sách", {type: "error"})
         }
         else if (!value){
-            alert("Noi dung rong")
+            toast("Nội dung bình luận rỗng", {type: "error"})
         }
         else{
             try {
@@ -113,7 +117,7 @@ export default function Comments({bookId}: {bookId:string}){
             <TextArea
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Controlled autosize"
+                placeholder="Nhập bình luận"
                 autoSize={{ minRows: 3, maxRows: 5 }}
             />
             <Button onClick = {postComment}> Post </Button>
@@ -123,39 +127,47 @@ export default function Comments({bookId}: {bookId:string}){
         )
     } 
     return (
-        <>
+        <div style={{backgroundColor: 'white', padding: 20, paddingRight: 100, marginBottom: 20}} className='rounded-lg'>
             {/* post comment */}
-            <div>
+            <ToastContainer></ToastContainer>
+            <h1 style={{fontWeight: "bold", marginBottom: 20}}>Bình luận về sách</h1>
+            <div className='flex flex-cols gap-4' style={{marginBottom: 10}}>
             <TextArea
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Controlled autosize"
+                placeholder="Nhập bình luận"
                 autoSize={{ minRows: 3, maxRows: 5 }}
             />
-            <Button onClick = {postComment}> Post </Button>
+            <Button onClick = {postComment}> Đăng </Button>
             </div>
+            <hr />
+            <div style={{marginBottom: 20, padding: 20}}>
             {comments.map((comment) => {
                 return (
-                    <div key = {comment._id}>
-                        <div>{comment.customer.name}</div>
-                        <div>{comment.content}</div>
-                        {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); setChangedContent(curr => comment.content);showModal()}}>Change comment</Button>: <></>}
-                        {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); showDeleteConfirm();}}>Delete Comment</Button> : <></>}
+                    <div key = {comment._id} className='flex flex-col gap-2'>
+                        <div style={{fontSize: 12}}>{comment.customer.name}</div>
+                        <pre style={{marginTop: 10, marginBottom: 10}} className='text-wrap overflow-y-auto overflow-x-hidden no-scrollbar'>{comment.content}</pre>
+                        <div className='flex gap-4'>
+                            {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); setChangedContent(curr => comment.content);showModal()}}>Sửa bình luận</Button>: <></>}
+                            {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); showDeleteConfirm();}}>Xóa bình luận</Button> : <></>}
+                        </div>
+                        <hr/>
                         {/* Modal */}
                     </div>
                 )
             })}
+            </div>
             <Modal
                             open={open}
-                            title="Title"
+                            title="Sửa bình luận"
                             onOk={handleOk}
                             onCancel={handleCancel}
                             footer={[
                                 <Button key="back" onClick={handleCancel}>
-                                  Return
+                                  Quay lại
                                 </Button>,
                                 <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                                  Submit
+                                  Đăng
                                 </Button>
                             ]}
                             
@@ -167,7 +179,9 @@ export default function Comments({bookId}: {bookId:string}){
                             >
                             </TextArea>
                         </Modal>
-            <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>
-        </>
+            <div className='flex justify-center items-center'>
+                <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>
+            </div>
+        </div>
     )
 }

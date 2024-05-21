@@ -113,21 +113,21 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
             </Form.Item> */}
 
             <Form.Item<FieldType>
-                label="Name"
+                label="Tên"
                 name="name"
                 rules={[{pattern: /[\p{L}\s]*$/, message: "Ten khong hop le"}]}
             >
                 <Input defaultValue={customerInfo.name}/>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Phonenumber"
+                label="Số điện thoại"
                 name="phonenumber"
                 rules={[{pattern: /\d{10}/, message: "So dien thoai khong hop le"}]}
             >
                 <Input defaultValue={customerInfo.phone}/>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Date of Birth"
+                label="Ngày sinh"
                 name="dateOfBirth"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >
@@ -135,7 +135,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
             </Form.Item>
 
             <Form.Item<FieldType>
-                label="Province"
+                label="Tỉnh"
                 name="province"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >
@@ -151,7 +151,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
                 </Select>
             </Form.Item>
             <Form.Item<FieldType>
-                label="District"
+                label="Quận"
                 name="district"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >
@@ -167,7 +167,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
                 </Select>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Ward"
+                label="Phường/huyện"
                 name="ward"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >
@@ -184,7 +184,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
-                    Confirm
+                    Xác nhận
             </Button>
             </Form.Item>
         </Form>

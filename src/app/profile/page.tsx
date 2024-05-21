@@ -10,6 +10,7 @@ import { Button } from "antd";
 import { Modal, Space } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import UpdateProfile from "../components/UpdateProfile";
+import {Card} from 'antd'
 export default function ProfilePage(){
     const router = useRouter();
     const [customerInfo, setCustomerInfo] = useState<CustomerInterface>();
@@ -75,35 +76,45 @@ export default function ProfilePage(){
         </>
     }
     return (
-        <>
-            <div>
-                <div>Ten: {customerInfo?.name}</div>
+        <div className="flex justify-center items-center">
+            
+            <Card title="Hồ sơ của tôi" bordered={false} style={{ width: "70vw", height: "80vh" }}>
+            <div style={{padding: 30, fontSize: 16}}>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Tên: </span> {customerInfo?.name}</div>
+                </div>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Số điện thoại: </span> {customerInfo?.phone}</div>
+                </div>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Email: </span> {customerInfo?.email}</div>
+                </div>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Địa chỉ nhà: </span> {customerInfo?.address}</div>
+                </div>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Ngày sinh: </span>{new Date(customerInfo!.dateOfBirth).toLocaleDateString()}</div>
+                </div>
+                <div style={{marginTop: 20}}>
+                    <div><span style={{fontWeight: "bold"}}>Độ uy tín </span>{customerInfo.reputation}</div>
+                </div>
             </div>
-            <div>
-                <div>So dien thoai: {customerInfo?.phone}</div>
+            
+            <div className="flex justify-center items-center">
+                <Button onClick={showModal}>Chỉnh sửa</Button>
             </div>
-            <div>
-                <div>Dia chi email: {customerInfo?.email}</div>
-            </div>
-            <div>
-                <div>Dia chi nha: {customerInfo?.address}</div>
-            </div>
-            <div>
-                <div>Ngay sinh: {new Date(customerInfo!.dateOfBirth).toLocaleDateString()}</div>
-            </div>
-            <Button onClick={showModal}>Chinh sua</Button>
             <Modal
                             open={open}
-                            title="Title"
+                            title="Chỉnh sửa hồ sơ"
                             onOk={handleOk}
                             onCancel={handleCancel}
                             footer={[
                                 <Button key="back" onClick={handleCancel}>
-                                  Return
+                                  Quay lại
                                 </Button>,
-                                <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                                  Submit
-                                </Button>
+                                // <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                //   Xác nhận
+                                // </Button>
                             ]}
                             
                         >
@@ -115,6 +126,7 @@ export default function ProfilePage(){
                             </TextArea> */}
                             <UpdateProfile customerInfo={customerInfo} setUpdatedProfile = {setUpdatedProfile}></UpdateProfile>
             </Modal>
-        </>
+            </Card>
+        </div>
     )
 }

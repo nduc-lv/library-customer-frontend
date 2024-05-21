@@ -5,7 +5,8 @@ import http from "../utils/http";
 export const UserContext = createContext({
     id: "",
     setState: (state:any) => {},
-    getCustomerId: (accessToken: string) => {}
+    getCustomerId: (accessToken: string) => {},
+    state: false
 });
 export function UserProvider({children}: any) {
     const [id, setId] = useState<string>(""); 
@@ -37,7 +38,7 @@ export function UserProvider({children}: any) {
     // call api to set interests
     return (
         <UserContext.Provider value ={
-            {id, setState, getCustomerId}
+            {id, setState, getCustomerId, state}
         }>
             {children}
         </UserContext.Provider> 

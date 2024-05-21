@@ -7,11 +7,24 @@ import { AxiosError } from "axios"
 import Books from "@/app/components/Books"
 import { Pagination } from "antd"
 import { PaginationProps } from "antd"
+import type { SearchProps } from 'antd/es/input/Search';
+import { Input, Form, Select, Button } from "antd";
 import GenreInterface from "@/app/interfaces/GenreInterface"
+import { useRouter } from "next/navigation"
+
+const {Search} = Input
 export default function GenrePage({params}: {params:{genreid:string}}){
+    const router = useRouter()
+    const [loadindSearch, setLoadingSearch] = useState<boolean>(false)
     const [books, setBooks] = useState<Array<BookInterface>>();
     const [page, setPage] = useState<number>(1);
+    const [total, setTotalPages] = useState<number>(1);
     const [genre, setGenre] = useState<GenreInterface>();
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        console.log(value)
+        router.push(`/search?q=${value}&page=1`);
+        
+      };
     const getBooksByGenres = async (genreid:string) => {
         try {
             const {genre} = await http.getWithAutoRefreshToken(`/getGenre/${genreid}`, {useAccessToken: false}); 
@@ -21,6 +34,8 @@ export default function GenrePage({params}: {params:{genreid:string}}){
             if (data.books) {
                 setBooks([...data.books]);
             }
+            if (data.totalPages)
+            setTotalPages(curr => data.totalPages)
         }
         catch (e) {
             if (e instanceof AxiosError){
@@ -41,9 +56,14 @@ export default function GenrePage({params}: {params:{genreid:string}}){
     }, [page]);
     return (
         <>
-            <div>The loai: {genre?.name}</div>
+            <div className="flex flex-row justify-center items-center w-screen" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
+                <Search placeholder="input search text" enterButton="Search" size="large" loading={loadindSearch} onSearch={onSearch}/>
+            </div>
+            <div className="text-center" style={{fontWeight: "bold"}}>Thể loại: {genre?.name}</div>
             <Books books={books}></Books>
-            {(!books) || <Pagination current={page} onChange={handleChange}></Pagination>}
+            <div className="flex justify-center items-center">
+                {(!books) || ((books.length == 0)) || <Pagination current={page} total={total * 10} onChange={handleChange}></Pagination>}
+            </div>
         </>
     )
 }

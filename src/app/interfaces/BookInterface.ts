@@ -13,6 +13,7 @@ interface BookInterface {
         __v: number
     }
     >,
+    review: string,
     quantity: number,
     __v: number
 }

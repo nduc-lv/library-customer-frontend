@@ -60,14 +60,20 @@ export default function Home() {
     getGenres();
   }, [])
   return (
-    <>
+    <div>
       {/* Search bar */}
-      <div className="flex flex-row justify-center items-center w-screen" style={{paddingLeft: "200px", paddingRight:"200px"}}>
-              <Search placeholder="input search text" enterButton="Search" size="large" loading={loadindSearch} onSearch={onSearch}/>
-      </div>
-      <Books books={books}></Books>
-      {(!books) || <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>}
       
-    </>
+        <div className="flex flex-row justify-center items-center w-screen" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
+              <Search placeholder="input search text" enterButton="Search" size="large" loading={loadindSearch} onSearch={onSearch}/>
+        </div>
+        <div>
+          <Books books={books}></Books>
+        </div>
+        <div className="flex flex-row justify-center items-center" style={{marginTop: "20px"}}>
+          {(!books) || <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>}
+        </div>
+  
+      
+    </div>
   );
 }

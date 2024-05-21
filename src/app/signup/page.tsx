@@ -24,6 +24,7 @@ export default function Singup() {
     const [selectedProvince, setSelectedProvince] = useState<string>();
     const [selectedDistrict, setSelectedDistrict] = useState<string>();
     const [selectedWard, setSelectedWard] = useState<string>()
+    const [isSent, setIsSent] = useState<boolean>(false);
     const router = useRouter();
     useEffect(() => {
         axios.get("https://vapi.vnappmob.com/api/province/")
@@ -65,7 +66,7 @@ export default function Singup() {
         try {
             const data = await http.postWithAutoRefreshToken(`signup`, body, {useAccessToken:false});
             console.log(data);
-            router.push('/login');
+            setIsSent(curr => true);
         }
         catch (e) {
             if (e instanceof AxiosError){
@@ -85,14 +86,21 @@ export default function Singup() {
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-
+    if (!isSent) {
+        <div className="flex justify-center items-center">
+            Vui lòng kiểm tra email của bạn.
+        </div>
+    }
     return (
-        <>
+        <div className='flex flex-col justify-center items-center'>
+            <div style={{fontWeight: "bold", marginBottom: 10}}>
+                Tạo tài khoản
+            </div>
             <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    style={{ maxWidth: 600 }}
+                    style={{ maxWidth: 600, width: "40vw" }}
                     initialValues={{ remember: true }}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -184,10 +192,10 @@ export default function Singup() {
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
-                    Submit
+                    Đăng ký
             </Button>
             </Form.Item>
     </Form>
-        </>
+        </div>
     )
 }

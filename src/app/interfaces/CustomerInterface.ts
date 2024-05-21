@@ -4,7 +4,8 @@ interface CustomerInterface {
     phone: string,
     email: string,
     dateOfBirth: string,
-    address: string
+    address: string,
+    reputation: number
 }
 
 export default CustomerInterface

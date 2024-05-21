@@ -8,11 +8,13 @@ import { UserContext } from "../context/CustomerContext";
 import Record from "../components/Record";
 import {Pagination} from "antd";
 import type { PaginationProps } from 'antd';
+import { useRouter } from "next/navigation";
 export default function RecordsPage() {
     // const [records, setRecords] = useState<Array<RecordInterface>>();
-    const records = [useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>()]
+    const records = [useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>()]
     const [loading, setLoading] = useState<boolean>(false);
     const {id} = useContext(UserContext)
+    const router = useRouter();
     const Records = ({type}:{type:number}) => {
         const [page, setPage] = useState<number>(1);
         const [totalPages, setTotalPages] = useState<number>(1);
@@ -27,25 +29,27 @@ export default function RecordsPage() {
                 records[type - 1][1]([...data.reservation])
             }
             catch (e) {
+                router.push("/login")
                 setLoading(false);
-                alert("Loi");
+                
             }
         }
         useEffect(() => {
             getAllReservation();
         }, [page])
         if (!(records[type - 1][0])) {
-            return <>
-                Loading
-            </>
+            return <div className="flex justify-center items-center">
+                Loading...
+            </div>
         }
         if (records[type - 1][0]?.length == 0 ){
-            return <>
-                Chua co ban ghi nao
-            </>
+            return <div className="flex justify-center items-center">
+                Chưa có bản ghi nào
+            </div>
         }
         return (
-            <>
+            <div>
+                <div className="flex justify-center items-center">
                 {records[type - 1][0]!.map((record) => {
                     return (
                         <div key={record._id}>
@@ -54,11 +58,20 @@ export default function RecordsPage() {
                         
                     )
                 })}
-                 {(!records[type - 1][0]) || <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>}
-            </>
+
+                </div>
+                 {(!records[type - 1][0]) || 
+                 <div className="flex justify-center items-center">
+                      <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>  
+                </div>}
+            </div>
         )
     }
     return (
+        <>
+        <div className="text-center" style={{fontWeight: "bold"}}>
+            LỊCH SỬ MƯỢN SÁCH
+        </div>
         <Tabs
         defaultActiveKey="1"
         centered
@@ -69,24 +82,21 @@ export default function RecordsPage() {
             },
             {
                 key: "2",
-                label: "Dat coc",
+                label: "Đặt trước",
                 children: Records({type: 2})
             },
             {
                 key: '3',
-                label: "Da tra",
+                label: "Đã trả",
                 children: Records({type: 3})
             },
             {
                 key: '4',
-                label: 'Dang muon',
-                children: (
-                    <>
-                        Dang muon
-                    </>
-                )
+                label: 'Đang mượn',
+                children: Records({type: 4})
             }
         ]}
       />
+        </>
     )
 }
