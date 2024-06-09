@@ -10,7 +10,7 @@ class HTTP {
     constructor (){
         this.axiosInstance = axios.create(
             {
-                baseURL: "http://localhost:3001/api/customer",
+                baseURL: "http://localhost:3000/api/customer",
                 timeout: 10000,
                 headers: {
                     "Content-Type": 'application/json'

@@ -5,6 +5,8 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import type { FormProps } from 'antd';
 import http from "../utils/http";
 import { AxiosError } from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 type FieldType = {
     email?: string;
 };
@@ -19,7 +21,7 @@ export default function ForgotPassword () {
         catch (e) {
           if (e instanceof AxiosError) {
             if (e.response?.status == 404) {
-              alert("Khong tim thay tai khoan")
+              toast("Không tìm thấy tài khoản", {type: "error"});
             }
           }
         }
@@ -31,6 +33,7 @@ export default function ForgotPassword () {
     if (!isSentEmail) {
       return (
           <div className="flex flex-col justify-center items-center" style={{padding: 100}}>
+            <ToastContainer></ToastContainer>
               <div style={{fontWeight: "bold", marginBottom: 10}}>
                 Nhập email để khôi phục mật khẩu
             </div>
@@ -63,7 +66,6 @@ export default function ForgotPassword () {
     return (
       <div className="flex justify-center items-center">
           Link khôi phục mật khẩu đã được gửi tới email của bạn, vui lòng kiểm tra email.
-          {/* Gửi lại */}
       </div>
     )
 }

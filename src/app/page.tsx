@@ -10,6 +10,7 @@ import type { SearchProps } from 'antd/es/input/Search';
 import { Input, Pagination, Form, Select, Button } from "antd";
 import GenreInterface from "./interfaces/GenreInterface";
 import { useRouter } from "next/navigation";
+import SearchBook from "./components/SearchBook";
 const {Search} = Input
 export default function Home() {
   const [books, setBooks] = useState<Array<BookInterface>>();
@@ -63,17 +64,16 @@ export default function Home() {
     <div>
       {/* Search bar */}
       
-        <div className="flex flex-row justify-center items-center w-screen" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
-              <Search placeholder="input search text" enterButton="Search" size="large" loading={loadindSearch} onSearch={onSearch}/>
-        </div>
+        {/* <div className="flex flex-row justify-center items-center w-full" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
+              <Search placeholder="Nhập tên sách, tên tác giả" enterButton="Tìm kiếm" size="large" loading={loadindSearch} onSearch={onSearch}/>
+        </div> */}
+        <SearchBook></SearchBook>
         <div>
           <Books books={books}></Books>
         </div>
         <div className="flex flex-row justify-center items-center" style={{marginTop: "20px"}}>
           {(!books) || <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>}
         </div>
-  
-      
     </div>
   );
 }

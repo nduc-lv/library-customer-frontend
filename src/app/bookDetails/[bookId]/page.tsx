@@ -7,16 +7,16 @@ import { Button, InputNumber } from "antd";
 import { useContext, useEffect, useState } from "react";
 import type { InputNumberProps } from 'antd';
 import { Card } from 'antd';
-import Image from "next/image";
+import {Image} from "antd";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AxiosError } from "axios";
-
 export default function BookDetail({params}:{params: {bookId:string}}) {
     const bookId:string = params.bookId;
     const [bookDetail, setBookDetail] = useState<BookInterface>();
     const [numberOfBooks, setNumberOfBooks] = useState<number>(1);
     const {id} = useContext(UserContext);
+    const [error, setError] = useState<number>();
     const getBookDetails = async () => {
         try {
             const data = await http.getWithAutoRefreshToken(`/getBookDetails/${bookId}`, {useAccessToken: false});
@@ -26,11 +26,17 @@ export default function BookDetail({params}:{params: {bookId:string}}) {
             }
         }
         catch (e) {
-            console.log(e);
+            if (e instanceof AxiosError){
+                setError(curr => e.response?.status);
+            }
         }
     }
     const reserve = async () => {
         try {
+            if (numberOfBooks == 0) {
+                toast("Cần mượn ít nhất 1 cuốn", {type: "error"});
+                return;
+            }
            await http.postWithAutoRefreshToken('/reserveBook', {
             bookId,
             numberOfBooks
@@ -63,6 +69,15 @@ export default function BookDetail({params}:{params: {bookId:string}}) {
     useEffect(() => {
         getBookDetails();
     }, [])
+    if (error) {
+        return (
+            <>
+                <div className="text-center">
+                    Không tìm thấy sách
+                </div>
+            </>
+        )
+    }
     return (
         <>
             {bookDetail === undefined ? (
@@ -74,8 +89,10 @@ export default function BookDetail({params}:{params: {bookId:string}}) {
             <div className="grid grid-cols-3 gap-4 auto-rows-max">
                 {/* <div>{bookDetail.name}</div> */}
                 
-                <Card style={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-                    <img alt="book's cover" src={bookDetail.image} width={368} height={368}></img>
+                <Card title="Ảnh bìa">
+                    <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                    <Image alt="bìa sách" src={`http://localhost:3000/images/${bookDetail.image}`} style={{width: 368, height: 368}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>
+                    </div>
                 </Card>
                 <div className="flex flex-col gap-4">
                     <Card title={bookDetail.name} style={{whiteSpace: "normal"}}>
@@ -91,8 +108,11 @@ export default function BookDetail({params}:{params: {bookId:string}}) {
                 <div>
                     <Card title={"Số lượng"}>
                         <p style={{marginBottom: 10}}>Còn: {bookDetail.quantity} cuốn</p>
-                        <InputNumber type="number" onChange={onChange} defaultValue={1} min={1} max = {bookDetail?.quantity}></InputNumber>
-                        <Button onClick={reserve}>Giữ chỗ</Button>
+                        <InputNumber type="number" onChange={onChange} defaultValue={1} min={1} max = {bookDetail?.quantity} style={{marginRight: 5}}></InputNumber>
+                        
+                        {numberOfBooks > 0 && numberOfBooks <= bookDetail.quantity ? <Button type="primary" onClick={reserve}>Đặt trước</Button> : 
+                        <Button type="primary" onClick={reserve} disabled={true}>Đặt trước</Button>
+                        }
                     </Card>
                 </div>
                 {/* <div>{bookDetail.quantity}</div>

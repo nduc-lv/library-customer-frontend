@@ -8,6 +8,7 @@ import {Select} from 'antd'
 import { useEffect, useState } from 'react';
 import CustomerInterface from '../interfaces/CustomerInterface';
 import dayjs from 'dayjs';
+import { useForm } from 'antd/es/form/Form';
 type FieldType = {
     name?:string;
     // email?: string;
@@ -18,7 +19,7 @@ type FieldType = {
     phonenumber?: string;
 };
 
-export default function UpdateProfile({customerInfo, setUpdatedProfile}: {customerInfo: CustomerInterface, setUpdatedProfile: any}) {
+export default function UpdateProfile({customerInfo, setUpdatedProfile, toast}: {toast:any,customerInfo: CustomerInterface, setUpdatedProfile: any}) {
     const [cities, setCities] = useState<any>()
     const [districts, setDistricts] = useState<any>();
     const [wards, setWards] = useState<any>();
@@ -68,6 +69,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
         }
         
         setUpdatedProfile({...body})
+        toast("Đã xác nhận, nhấn cập nhật để hoàn tất", {type: "success"})
         // try {
         //     const data = await http.postWithAutoRefreshToken(`signup`, body, {useAccessToken:false});
         //     console.log(data);
@@ -103,6 +105,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete="off"
+                    id="myForm"
             >
             {/* <Form.Item<FieldType>
                     label="Email"
@@ -135,18 +138,20 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
             </Form.Item>
 
             <Form.Item<FieldType>
-                label="Tỉnh"
+                label="Tỉnh / Thành phố"
                 name="province"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >
                 {/* City */}
-                <Select onChange={(value) => getDistrict(value)} defaultValue={customerInfo.address.split(', ')[0]}>
+                <Select onChange={(value) => {getDistrict(value)}} defaultValue={customerInfo.address.split(', ')[0]}>
                     {!(cities) || cities.map((city:any) => {
-                        return (
-                            <Select.Option value= {`${city.province_id}&${city.province_name}`} key={city.province_id}>
-                                {city.province_name}
-                            </Select.Option>
-                        )
+                        if (city.province_id == '01' || city.province_id == '74'){
+                            return (
+                                <Select.Option value= {`${city.province_id}&${city.province_name}`} key={city.province_id}>
+                                    {city.province_name}
+                                </Select.Option>
+                            )
+                        }
                     })}
                 </Select>
             </Form.Item>
@@ -167,7 +172,7 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile}: {custom
                 </Select>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Phường/huyện"
+                label="Phường"
                 name="ward"
                 // rules={[{ required: true, message: 'Please input your !' }]}
             >

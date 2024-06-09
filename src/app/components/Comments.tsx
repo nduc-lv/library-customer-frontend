@@ -1,5 +1,5 @@
 'use client'
-import {useState, useEffect, useContext} from 'react'
+import {useState, useEffect, useContext, useRef} from 'react'
 import CommentInterface from '../interfaces/CommentInterface';
 import http from '../utils/http';
 import { Pagination } from 'antd';
@@ -13,6 +13,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 import {Card} from 'antd'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AxiosError } from 'axios';
 
 const { confirm } = Modal;
 export default function Comments({bookId}: {bookId:string}){
@@ -21,7 +22,7 @@ export default function Comments({bookId}: {bookId:string}){
     const [changedContent, setChangedContent] = useState<string>("");
     const [totalPages, setTotalPages] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(false);
-    const [commentId, setCommentId] = useState<string>("");
+    const commentId = useRef("");
     const [value, setValue] = useState('');
     const {id} = useContext(UserContext);
     console.log(id);
@@ -29,12 +30,12 @@ export default function Comments({bookId}: {bookId:string}){
     const showModal = () => {
         setOpen(true);
       };
-    
+
     const handleOk = async () => {
         try {
             setLoading(true);
             await http.postWithAutoRefreshToken("/changeComment", {
-                commentId,
+                commentId: commentId.current,
                 content: changedContent,
             }, {useAccessToken: true});
             setLoading(false);
@@ -42,6 +43,7 @@ export default function Comments({bookId}: {bookId:string}){
             setOpen(false);
         }
         catch (e){
+            toast("Lỗi", {type: "error"});
             console.log(e);
         }
       };
@@ -79,22 +81,22 @@ export default function Comments({bookId}: {bookId:string}){
                 setValue(curr => "");
             }
             catch (e) {
-                console.log(e);
+                toast("Không tồn tại", {type: "error"});
             }
         }
     }
     const showDeleteConfirm = () => {
         confirm({
-          title: 'Are you sure delete this task?',
+          title: 'Thông báo',
           icon: <ExclamationCircleFilled />,
-          content: 'Delete comment',
-          okText: 'Yes',
+          content: 'Xóa bình luận?',
+          okText: 'Xóa',
           okType: 'danger',
-          cancelText: 'No',
+          cancelText: 'Không',
           onOk() {
-            http.postWithAutoRefreshToken('/deleteComment', {commentId}, {useAccessToken: true})
+            http.postWithAutoRefreshToken('/deleteComment', {commentId: commentId.current}, {useAccessToken: true})
             .then(() => {getComments()})
-            .catch((e) => {console.log(e)});
+            .catch((e) => {toast("Lỗi", {type: "error"})});
           },
           onCancel() {
             console.log('Cancel');
@@ -112,17 +114,22 @@ export default function Comments({bookId}: {bookId:string}){
     }
     if (comments.length == 0) {
         return (
+
             <div>
-                <div>
+                 <ToastContainer></ToastContainer>
+                 <h1 style={{fontWeight: "bold", marginBottom: 20}}>Bình luận về sách</h1>
+            <div className='flex flex-cols gap-4' style={{marginBottom: 10}}>
             <TextArea
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="Nhập bình luận"
                 autoSize={{ minRows: 3, maxRows: 5 }}
             />
-            <Button onClick = {postComment}> Post </Button>
+            <Button type="primary" onClick = {postComment}> Đăng </Button>
             </div>
-                Sách chưa có bình luận nào
+                <p style={{padding: 50, textAlign: "center"}}>
+                    Sách chưa có bình luận nào
+                </p>
             </div>
         )
     } 
@@ -138,18 +145,18 @@ export default function Comments({bookId}: {bookId:string}){
                 placeholder="Nhập bình luận"
                 autoSize={{ minRows: 3, maxRows: 5 }}
             />
-            <Button onClick = {postComment}> Đăng </Button>
+            <Button type="primary" onClick = {postComment}> Đăng </Button>
             </div>
             <hr />
             <div style={{marginBottom: 20, padding: 20}}>
             {comments.map((comment) => {
                 return (
                     <div key = {comment._id} className='flex flex-col gap-2'>
-                        <div style={{fontSize: 12}}>{comment.customer.name}</div>
-                        <pre style={{marginTop: 10, marginBottom: 10}} className='text-wrap overflow-y-auto overflow-x-hidden no-scrollbar'>{comment.content}</pre>
+                        <div style={{fontSize: 16}}>{comment.customer.name}</div>
+                        <pre style={{marginTop: 10, fontSize: 20, marginBottom: 10, fontFamily: "monospace", whiteSpace: "pre-wrap",  overflowX: "auto"}} className='text-wrap overflow-y-auto overflow-x-hidden no-scrollbar'>{comment.content}</pre>
                         <div className='flex gap-4'>
-                            {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); setChangedContent(curr => comment.content);showModal()}}>Sửa bình luận</Button>: <></>}
-                            {comment.customer._id == id ? <Button onClick={() => {setCommentId(curr => comment._id); showDeleteConfirm();}}>Xóa bình luận</Button> : <></>}
+                            {comment.customer._id == id ? <Button type="primary" onClick={() => {commentId.current = comment._id; setChangedContent(curr => comment.content);showModal()}}>Sửa bình luận</Button>: <></>}
+                            {comment.customer._id == id ? <Button type="primary" onClick={() => {commentId.current = comment._id; showDeleteConfirm();}}>Xóa bình luận</Button> : <></>}
                         </div>
                         <hr/>
                         {/* Modal */}
@@ -163,10 +170,10 @@ export default function Comments({bookId}: {bookId:string}){
                             onOk={handleOk}
                             onCancel={handleCancel}
                             footer={[
-                                <Button key="back" onClick={handleCancel}>
+                                <Button type="primary" key="back" onClick={handleCancel}>
                                   Quay lại
                                 </Button>,
-                                <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                <Button type="primary" key="submit" loading={loading} onClick={handleOk}>
                                   Đăng
                                 </Button>
                             ]}

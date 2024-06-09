@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from "next/navigation"
 import BookInterface from "../interfaces/BookInterface"
+import {Image} from 'antd';
 import { Card } from 'antd';
 const { Meta } = Card;
 export default function Books({books}: {books: Array<BookInterface> | undefined}){
@@ -18,7 +19,7 @@ export default function Books({books}: {books: Array<BookInterface> | undefined}
     }
     return (
         <>
-            <div className="grid grid-cols-4 gap-3 auto-rows-max" style={{padding: 20}}>
+            <div className="grid grid-cols-4 gap-2 auto-rows-max" style={{padding: 20}}>
                 {books.map((book) => {
                     return (
                         // <div className= "cursor-pointer" key =  {book._id} onClick = {() => router.push(`/bookDetails/${book._id}`)}>
@@ -51,7 +52,7 @@ export default function Books({books}: {books: Array<BookInterface> | undefined}
                         <div key={book._id} onClick = {() => router.push(`/bookDetails/${book._id}`)}>
                             <Card
                                 hoverable
-                                cover={<img alt="example" src={book.image} style={{height: 250}}/>}
+                                cover={<Image preview={false} alt="bìa sách" src={`http://localhost:3000/images/${book.image}`} style={{height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>}
                                 
                             >
                                 <Meta title={book.name} description={book.authors.map((author) => author.name).join(",")} />

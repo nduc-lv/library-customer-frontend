@@ -11,6 +11,8 @@ import { Modal, Space } from 'antd';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import UpdateProfile from "../components/UpdateProfile";
 import {Card} from 'antd'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function ProfilePage(){
     const router = useRouter();
     const [customerInfo, setCustomerInfo] = useState<CustomerInterface>();
@@ -37,22 +39,18 @@ export default function ProfilePage(){
     }
     const handleOk = async () => {
         try {
-            // setLoading(true);
-            // await http.postWithAutoRefreshToken("/changeComment", {
-            //     commentId,
-            //     content: changedContent,
-            // }, {useAccessToken: true});
-            // setLoading(false);
-            // await getComments();
-            // setOpen(false);
             setLoading(true);
             await http.postWithAutoRefreshToken('/updateProfile', updatedProfile, {useAccessToken: true});
-            setLoading(false);
             await getCustomerInfo();
             setOpen(false);
+            setUpdatedProfile(curr => undefined);
         }
         catch (e){
+            toast("Lỗi", {type: "error"});
             console.log(e);
+        }
+        finally {
+            setLoading(false);
         }
       };
     
@@ -75,9 +73,26 @@ export default function ProfilePage(){
             Loading...
         </>
     }
+    const returnButton = () => {
+        if (updatedProfile) {
+            return (
+                <Button form="myForm" key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                  Cập nhật
+                </Button>
+            )
+        }
+        else {
+            return (
+            <Button disabled={true} form="myForm" key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                  Cập nhật
+            </Button>
+
+            )
+        }
+    }
     return (
         <div className="flex justify-center items-center">
-            
+            <ToastContainer></ToastContainer>
             <Card title="Hồ sơ của tôi" bordered={false} style={{ width: "70vw", height: "80vh" }}>
             <div style={{padding: 30, fontSize: 16}}>
                 <div style={{marginTop: 20}}>
@@ -96,12 +111,12 @@ export default function ProfilePage(){
                     <div><span style={{fontWeight: "bold"}}>Ngày sinh: </span>{new Date(customerInfo!.dateOfBirth).toLocaleDateString()}</div>
                 </div>
                 <div style={{marginTop: 20}}>
-                    <div><span style={{fontWeight: "bold"}}>Độ uy tín </span>{customerInfo.reputation}</div>
+                    <div><span style={{fontWeight: "bold"}}>Độ uy tín: </span>{customerInfo.reputation}</div>
                 </div>
             </div>
             
             <div className="flex justify-center items-center">
-                <Button onClick={showModal}>Chỉnh sửa</Button>
+                <Button type="primary" onClick={showModal}>Chỉnh sửa</Button>
             </div>
             <Modal
                             open={open}
@@ -109,12 +124,11 @@ export default function ProfilePage(){
                             onOk={handleOk}
                             onCancel={handleCancel}
                             footer={[
-                                <Button key="back" onClick={handleCancel}>
-                                  Quay lại
+                                <Button type="primary" key="back" onClick={handleCancel}>
+                                  Hủy
                                 </Button>,
-                                // <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                                //   Xác nhận
-                                // </Button>
+                                returnButton()
+
                             ]}
                             
                         >
@@ -124,7 +138,7 @@ export default function ProfilePage(){
                                 autoSize={{ minRows: 3, maxRows: 5 }}                            
                             >
                             </TextArea> */}
-                            <UpdateProfile customerInfo={customerInfo} setUpdatedProfile = {setUpdatedProfile}></UpdateProfile>
+                            <UpdateProfile customerInfo={customerInfo} setUpdatedProfile = {setUpdatedProfile} toast={toast}></UpdateProfile>
             </Modal>
             </Card>
         </div>

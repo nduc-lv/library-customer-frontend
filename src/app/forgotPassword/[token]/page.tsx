@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react';
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
 import http from '@/app/utils/http';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 type FieldType = {
     password?: string;
 };
@@ -25,7 +26,7 @@ export default function ResetPassword({params}:{params:{token: string}}){
             router.push("/login")              
         }
         catch (e) {
-            console.log("Loi")
+            toast("Lỗi", {type: "error"});
         }
     };
       
@@ -67,6 +68,7 @@ export default function ResetPassword({params}:{params:{token: string}}){
     }
     return (
         <div className='flex justify-center items-center flex-col'>
+            <ToastContainer></ToastContainer>
             <div style={{fontWeight: "bold", marginBottom: 10}}>
                 Nhập mật khẩu mới
             </div>

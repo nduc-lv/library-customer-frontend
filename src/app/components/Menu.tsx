@@ -1,7 +1,7 @@
 'use client'
 
 import {useContext, useEffect, useState} from 'react'
-import { AppstoreOutlined, MailOutlined, SettingOutlined, HomeOutlined , UserOutlined, DownOutlined} from '@ant-design/icons';
+import { BookOutlined, FileTextOutlined, SettingOutlined, HomeOutlined , UserOutlined, DownOutlined} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { UserContext } from '../context/CustomerContext';
@@ -11,6 +11,7 @@ import http from '../utils/http';
 import CustomerInterface from '../interfaces/CustomerInterface';
 import {Popover} from 'antd';
 import { useRouter } from 'next/navigation';
+
 type MenuItem = Required<MenuProps>['items'][number];
 
 
@@ -75,7 +76,7 @@ export default function MenuComp() {
   const items: MenuItem[] = [
     {
       label: (
-        <Link href={"/"}>Trang chủ</Link>
+        <Link href={"/"}>Hust Library</Link>
       ),
       key: 'home',
       icon: <HomeOutlined />,
@@ -85,30 +86,12 @@ export default function MenuComp() {
         <Link href={"/records"}>Lịch sử</Link>
       ),
       key: 'records',
-      icon: <AppstoreOutlined />,
+      icon: <FileTextOutlined />,
     },
     {
       label: 'Thể loại',
       key: 'Genre',
-      icon: <SettingOutlined />,
-      // children: [
-      //   {
-      //     type: 'group',
-      //     label: 'Item 1',
-      //     children: [
-      //       { label: 'Option 1', key: 'setting:1' },
-      //       { label: 'Option 2', key: 'setting:2' },
-      //     ],
-      //   },
-      //   {
-      //     type: 'group',
-      //     label: 'Item 2',
-      //     children: [
-      //       { label: 'Option 3', key: 'setting:3' },
-      //       { label: 'Option 4', key: 'setting:4' },
-      //     ],
-      //   },
-      // ],
+      icon: <BookOutlined />,
       children: genres ? genres.map((genre, index) => {
         return (
           {
@@ -134,22 +117,6 @@ export default function MenuComp() {
   ];
     const [current, setCurrent] = useState('home');
     const {getCustomerId, id} = useContext(UserContext);
-    // useEffect(() => {
-    //   try {
-    //     const accessToken = localStorage.get("accessToken");
-    //     if (!accessToken) {
-    //       console.log("AccessToken null");
-    //     }
-    //     else {
-    //       if (!id){
-    //         getCustomerId(accessToken)
-    //       }
-    //     }
-    //   }
-    //   catch (e) {
-    //     console.log(e);
-    //   }
-    // }, [])
     console.log(id);
     const onClick: MenuProps['onClick'] = (e) => {
         console.log('click ', e);
@@ -161,23 +128,9 @@ export default function MenuComp() {
   return (
     <div className='flex justify-between items-center'>
       <div className='grow'>
-        <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} style={{marginBottom: "20px", display:"flex", justifyContent:"space-around"}}/>
+        <Menu onClick={onClick} selectedKeys={['0']} mode="horizontal" items={items} style={{marginBottom: "20px", display:"flex", justifyContent:"space-around"}} theme="dark"/>
       </div>
-      {/* {user ? (
-          <Popover content={""} style={{ width: 100 }} trigger="click" placement="bottom">
-            <div className='pr-28 cursor-pointer' ><UserOutlined className='mr-4' />{}<DownOutlined className='ml-4 opacity-70' /></div>
-          </Popover>
-        ) : (
-          <div className='pr-14 flex items-center'>
-            <button className='' onClick={()=>{}}>
-              Đăng nhập
-            </button>
-            <span className='text-[#a6a6a6] mx-2'>/</span>
-            <button className='' onClick={()=>{}}>
-              Đăng ký
-            </button>
-          </div>
-        )} */}
+
     </div>
   )
 };

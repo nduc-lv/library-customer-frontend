@@ -11,7 +11,9 @@ import type { SearchProps } from 'antd/es/input/Search';
 import { Input, Form, Select, Button } from "antd";
 import GenreInterface from "@/app/interfaces/GenreInterface"
 import { useRouter } from "next/navigation"
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import SearchBook from "@/app/components/SearchBook"
 const {Search} = Input
 export default function GenrePage({params}: {params:{genreid:string}}){
     const router = useRouter()
@@ -41,7 +43,7 @@ export default function GenrePage({params}: {params:{genreid:string}}){
             if (e instanceof AxiosError){
                 switch (e.response?.status){
                     case 404: {
-                        alert("The loai khong hop le")
+                        toast("Thể loại không hợp lệ", {type: "error"});
                         break
                     }
                 }
@@ -56,9 +58,11 @@ export default function GenrePage({params}: {params:{genreid:string}}){
     }, [page]);
     return (
         <>
-            <div className="flex flex-row justify-center items-center w-screen" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
-                <Search placeholder="input search text" enterButton="Search" size="large" loading={loadindSearch} onSearch={onSearch}/>
-            </div>
+            <ToastContainer></ToastContainer>
+            {/* <div className="flex flex-row justify-center items-center w-full" style={{marginBottom: "20px", paddingLeft: "200px", paddingRight:"200px"}}>
+                <Search placeholder="Nhập tên sách, tên tác giả" enterButton="Tìm kiếm" size="large" loading={loadindSearch} onSearch={onSearch}/>
+            </div> */}
+            <SearchBook></SearchBook>
             <div className="text-center" style={{fontWeight: "bold"}}>Thể loại: {genre?.name}</div>
             <Books books={books}></Books>
             <div className="flex justify-center items-center">

@@ -9,12 +9,15 @@ import Record from "../components/Record";
 import {Pagination} from "antd";
 import type { PaginationProps } from 'antd';
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 export default function RecordsPage() {
     // const [records, setRecords] = useState<Array<RecordInterface>>();
     const records = [useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>(), useState<Array<RecordInterface>>()]
     const [loading, setLoading] = useState<boolean>(false);
     const {id} = useContext(UserContext)
     const router = useRouter();
+    const [reload, setReload] = useState<boolean>(false);
     const Records = ({type}:{type:number}) => {
         const [page, setPage] = useState<number>(1);
         const [totalPages, setTotalPages] = useState<number>(1);
@@ -36,7 +39,7 @@ export default function RecordsPage() {
         }
         useEffect(() => {
             getAllReservation();
-        }, [page])
+        }, [reload, page])
         if (!(records[type - 1][0])) {
             return <div className="flex justify-center items-center">
                 Loading...
@@ -49,11 +52,11 @@ export default function RecordsPage() {
         }
         return (
             <div>
-                <div className="flex justify-center items-center">
+                <div className="flex flex-col justify-center items-center">
                 {records[type - 1][0]!.map((record) => {
                     return (
                         <div key={record._id}>
-                            <Record record={record} update={getAllReservation}></Record>
+                            <Record toast={toast} record={record} update={setReload}></Record>
                         </div>
                         
                     )
@@ -61,7 +64,7 @@ export default function RecordsPage() {
 
                 </div>
                  {(!records[type - 1][0]) || 
-                 <div className="flex justify-center items-center">
+                 <div className="flex flex-col justify-center items-center" style={{paddingBottom: 20}}>
                       <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>  
                 </div>}
             </div>
@@ -69,6 +72,7 @@ export default function RecordsPage() {
     }
     return (
         <>
+        <ToastContainer></ToastContainer>
         <div className="text-center" style={{fontWeight: "bold"}}>
             LỊCH SỬ MƯỢN SÁCH
         </div>

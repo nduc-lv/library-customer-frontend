@@ -6,6 +6,8 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import {Select} from 'antd'
 import { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 type FieldType = {
     name?:string;
     email?: string;
@@ -72,11 +74,11 @@ export default function Singup() {
             if (e instanceof AxiosError){
                 switch (e.response?.status){
                     case 422: {
-                        console.log(e);
+                        toast("Thử lại", {type: "error"});
                         break
                     }
                     case 409: {
-                        alert("Tai khoan da ton tai")
+                        toast("Tài khoản đã tồn tại", {type: "error"});
                     }
                 }
             }
@@ -86,13 +88,16 @@ export default function Singup() {
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-    if (!isSent) {
+    if (isSent) {
+        return (
         <div className="flex justify-center items-center">
             Vui lòng kiểm tra email của bạn.
         </div>
+        )
     }
     return (
-        <div className='flex flex-col justify-center items-center'>
+        <div className='flex flex-col justify-center items-center' style={{minHeight: "90vh"}}>
+            <ToastContainer></ToastContainer>
             <div style={{fontWeight: "bold", marginBottom: 10}}>
                 Tạo tài khoản
             </div>
@@ -109,59 +114,61 @@ export default function Singup() {
             <Form.Item<FieldType>
                     label="Email"
                     name="email"
-                    rules={[{ type:"email", required: true, message: 'Please input your username!' }]}
+                    rules={[{ type:"email", required: true, message: 'Email không được để trống' }]}
             >
                     <Input />
             </Form.Item>
 
             <Form.Item<FieldType>
-                label="Password"
+                label="Mật khẩu"
                 name="password"
-                rules={[{ required: true, message: 'Please input your password!'}, {pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, message: "It nhat 8 ky tu, 1 chu cai in hoa, 1 chu cai in thuong, 1 so, 1 ky tu dac biet"}]}
+                rules={[{ required: true, message: 'Mật khẩu không được để trông'}, {pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, message: "Ít nhất 8 ký tự, 1 chữ cái in hoa, 1 chữ cái in thường, 1 chữ số, 1 ký tự đặc biệt"}]}
             >
                 <Input.Password />
             </Form.Item>
             <Form.Item<FieldType>
-                label="Name"
+                label="Tên"
                 name="name"
-                rules={[{ required: true, message: 'Please input your name' }, {pattern: /[\p{L}\s]*$/, message: "Ten khong hop le"}]}
+                rules={[{ required: true, message: 'Tên không được để trống' }, {pattern: /[\p{L}\s]*$/, message: "Tên không hợp lệ"}]}
             >
                 <Input/>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Phonenumber"
-                name="phonenumber"
-                rules={[{ required: true, message: 'Please input your phonenumber' }, {pattern: /\d{10}/, message: "So dien thoai khong hop le"}]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item<FieldType>
-                label="Date of Birth"
+                label="Ngày sinh"
                 name="dateOfBirth"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                rules={[{ required: true, message: 'Ngày sinh không được để trống' }]}
             >
                 <DatePicker></DatePicker>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Province"
+                label="Số điện thoại"
+                name="phonenumber"
+                rules={[{ required: true, message: 'Số điện thoại không được để trống' }, {pattern: /^(\d{10}|\d{11})$/, message: "Số điện thoại không hợp lệ"}]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item<FieldType>
+                label="Tỉnh / Thành phố"
                 name="province"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                rules={[{ required: true, message: 'Không được để trống mục này' }]}
             >
                 {/* City */}
                 <Select onChange={(value) => getDistrict(value)}>
                     {!(cities) || cities.map((city:any) => {
-                        return (
-                            <Select.Option value= {`${city.province_id}&${city.province_name}`} key={city.province_id}>
-                                {city.province_name}
-                            </Select.Option>
-                        )
+                        if (city.province_id == "01" || city.province_id == '79'){
+                            return (
+                                <Select.Option value= {`${city.province_id}&${city.province_name}`} key={city.province_id}>
+                                    {city.province_name}
+                                </Select.Option>
+                            )
+                        }
                     })}
                 </Select>
             </Form.Item>
             <Form.Item<FieldType>
-                label="District"
+                label="Quận / Huyện"
                 name="district"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                rules={[{ required: true, message: 'Không được để trống mục này' }]}
             >
                 {/* District */}
                 <Select onChange={(value) => getWards(value)}>
@@ -175,9 +182,9 @@ export default function Singup() {
                 </Select>
             </Form.Item>
             <Form.Item<FieldType>
-                label="Ward"
+                label="Phường / Xã"
                 name="ward"
-                rules={[{ required: true, message: 'Please input your !' }]}
+                rules={[{ required: true, message: 'Không được để trống mục này' }]}
             >
                 {/* Ward */}
                 <Select onChange={(value) => setSelectedWard(value)}>

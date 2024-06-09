@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Modal } from "antd";
+import { Button, Image, Modal } from "antd";
 import RecordInterface from "../interfaces/RecordInterface";
 import { useState } from "react";
 import { InputNumber } from "antd";
@@ -9,12 +9,14 @@ import http from "../utils/http";
 import { AxiosError } from "axios";
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import {Card} from "antd";
+import { useRouter } from "next/navigation";
 const {confirm} = Modal;
 const {Meta} = Card
-export default function Record({record, update}: {record: RecordInterface, update:any}){
+export default function Record({record, update, toast}: {record: RecordInterface, update:any, toast: any}){
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [numberOfBooks, setNumberOfBooks] = useState<number>(1);
+    const router = useRouter();
     const showModal = () => {
         setOpen(true);
       };
@@ -35,16 +37,17 @@ export default function Record({record, update}: {record: RecordInterface, updat
             // setOpen(false);
             setLoading(false);
             // update
-            update();
+            //@ts-ignore
+            update(curr => !curr)
             setOpen(false);
         }
         catch (e){
             if (e instanceof AxiosError){
                 if (e.response?.status == 404) {
-                    alert("Not found")
+                    toast("Không tìm thấy", {type: "error"});
                 }
                 else if (e.response?.status == 406) {
-                    alert("Het sach")
+                    toast("Hết sách", {type: "error"})
                 }
             }
             console.log(e);
@@ -56,19 +59,19 @@ export default function Record({record, update}: {record: RecordInterface, updat
     };
     const showDeleteConfirm = (record:RecordInterface) => {
         confirm({
-          title: 'Are you sure delete this task?',
+          title: 'Xóa đơn?',
           icon: <ExclamationCircleFilled />,
-          content: 'Delete reservation',
-          okText: 'Yes',
+          content: 'Xóa đơn đặt trước',
+          okText: 'Xóa',
           okType: 'danger',
-          cancelText: 'No',
+          cancelText: 'Hủy',
           onOk() {
             http.postWithAutoRefreshToken('/deleteReservation', {bookId: record.book._id, recordId: record._id}, {useAccessToken: true})
-            .then(() => {update()})
+            .then(() => {update((curr:any) => !curr)})
             .catch((e) => {
                 if (e instanceof AxiosError){
                     if (e.response?.status == 404) {
-                        alert("Not found")
+                        toast("Không tồn tại", {type: "error"});
                     }
                 }
             });
@@ -94,28 +97,29 @@ export default function Record({record, update}: {record: RecordInterface, updat
             <div>
                 {new Date(record.timeEnd).toLocaleDateString()}
             </div>
-            {record.status == 'Đặt cọc' ? (
+            {record.status == 'Đặt trước' ? (
                 <div>
-                    <Button onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
-                    <Button onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
+                    <Button type="primary" onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
+                    <Button type="primary" onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
                 </div>
             ) :
             <></>} */}
              <Card
+                // onClick={() => {router.push(`/bookDetails/${record.book._id}`)}}
                 hoverable
                 style={{display: "flex", flexDirection: "row"}}
-                cover={<img alt={record.book.name} src={record.book.image} style={{width: 200}}/>}
+                cover={<div style={{padding: 20}}><Image alt={record.book.name} src={`http://localhost:3000/images/${record.book.image}`} style={{width: 200, height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/></div>}
             >
                 <Meta title={record.book.name} />
-                <div style={{width: "40vw"}}>
+                <div style={{width: "40vw"}} onClick = {() => {router.push(`/bookDetails/${record.book._id}`)}}>
                     <div style={{marginTop: 10, width: "60%"}} className="truncate">
-                        <span style={{fontWeight: "bold"}}>Tác giả: </span> {record.book.authors.map((author) => author.name).join(", ")} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                        <span style={{fontWeight: "bold"}}>Tác giả: </span> {record.book.authors.map((author) => author.name).join(", ")}
                     </div>
                     <div style={{marginTop: 10}} className="truncate">
                         <span style={{fontWeight: "bold"}}>Thể loại: </span> {record.book.genres.map((genre) => genre.name).join(", ")}
                     </div>
                     <div style={{marginTop: 10}} className="truncate">
-                        <span style={{fontWeight: "bold"}}>Trạng thái: </span> {record.status == "Đặt cọc" ? "Đặt trước" : record.status}
+                        <span style={{fontWeight: "bold"}}>Trạng thái: </span> {record.status == "Đặt trước" ? "Đặt trước" : record.status}
                     </div>
                     <div style={{marginTop: 10}} className="truncate">
                         <span style={{fontWeight: "bold"}}>Số lượng đặt: </span> {record.numberOfBooks} cuốn
@@ -127,10 +131,10 @@ export default function Record({record, update}: {record: RecordInterface, updat
                         <span style={{fontWeight: "bold"}}>Hạn lấy sách: </span> {new Date(record.timeEnd).toLocaleDateString()}
                     </div>
                 </div>
-                {record.status == 'Đặt cọc' ? (
+                {record.status == 'Đặt trước' ? (
                 <div style={{marginTop: 10}} className="flex gap-2">
-                    <Button onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
-                    <Button onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
+                    <Button type="primary" onClick={() =>{showModal(); setNumberOfBooks(curr => record.numberOfBooks)}}>Chỉnh sửa</Button>
+                    <Button type="primary" onClick={() => {showDeleteConfirm(record)}}>Hủy đặt trước</Button> 
                 </div>
             ) :
             <></>}
@@ -141,10 +145,10 @@ export default function Record({record, update}: {record: RecordInterface, updat
                             onOk={() => {handleOk(record)}}
                             onCancel={handleCancel}
                             footer={[
-                                <Button key="back" onClick={handleCancel}>
+                                <Button type="primary" key="back" onClick={handleCancel}>
                                   Hủy
                                 </Button>,
-                                <Button disabled={(numberOfBooks == record.numberOfBooks)} key="submit" type="primary" loading={loading} onClick={() => {handleOk(record)}}>
+                                <Button type="primary" disabled={(numberOfBooks == record.numberOfBooks)} key="submit" loading={loading} onClick={() => {handleOk(record)}}>
                                   Xác nhận
                                 </Button>
                             ]}
