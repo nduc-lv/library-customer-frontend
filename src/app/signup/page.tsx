@@ -129,7 +129,7 @@ export default function Singup() {
             <Form.Item<FieldType>
                 label="Mật khẩu"
                 name="password"
-                rules={[{ required: true, message: 'Mật khẩu không được để trông'}, {pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, message: "Ít nhất 8 ký tự, 1 chữ cái in hoa, 1 chữ cái in thường, 1 chữ số, 1 ký tự đặc biệt"}]}
+                rules={[{ required: true, message: 'Mật khẩu không được để trông'}, {pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, message: "Ít nhất 8 ký tự, 1 chữ cái in hoa, 1 chữ cái in thường, 1 chữ số, 1 ký tự đặc biệt"}]}
             >
                 <Input.Password />
             </Form.Item>

@@ -63,10 +63,10 @@ export default function RecordsPage() {
                 })}
 
                 </div>
-                 {(!records[type - 1][0]) || 
+                 {/* {(!records[type - 1][0]) || 
                  <div className="flex flex-col justify-center items-center" style={{paddingBottom: 20}}>
                       <Pagination current={page} total={totalPages * 10} onChange={onChangePage}></Pagination>  
-                </div>}
+                </div>} */}
             </div>
         )
     }

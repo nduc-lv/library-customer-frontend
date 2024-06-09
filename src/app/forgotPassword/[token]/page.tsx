@@ -86,7 +86,7 @@ export default function ResetPassword({params}:{params:{token: string}}){
             <Form.Item<FieldType>
                 label="Mật khẩu mới"
                 name="password"
-                rules={[{ required: true, message: 'Mật khẩu không được để trống' },{pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, message: "It nhat 8 ky tu, 1 chu cai in hoa, 1 chu cai in thuong, 1 so, 1 ky tu dac biet"}]}
+                rules={[{ required: true, message: 'Mật khẩu không được để trống' },{pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, message: "It nhat 8 ky tu, 1 chu cai in hoa, 1 chu cai in thuong, 1 so, 1 ky tu dac biet"}]}
             >
                 <Input.Password />
             </Form.Item>
