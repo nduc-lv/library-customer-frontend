@@ -28,6 +28,13 @@ export default function Singup() {
     const [selectedWard, setSelectedWard] = useState<string>()
     const [isSent, setIsSent] = useState<boolean>(false);
     const router = useRouter();
+    function containsNumbersOrNonUnicodeLetters(input: string) {
+        // Regular expression to match numbers or non-Unicode letter characters
+        const regex = /[\d`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        
+        // Test the input string against the regular expression
+        return !regex.test(input);
+    }
     useEffect(() => {
         axios.get("https://vapi.vnappmob.com/api/province/")
         .then((response) => {
@@ -129,7 +136,14 @@ export default function Singup() {
             <Form.Item<FieldType>
                 label="Tên"
                 name="name"
-                rules={[{ required: true, message: 'Tên không được để trống' }, {pattern: /[\p{L}\s]*$/, message: "Tên không hợp lệ"}]}
+                rules={[{ required: true, message: 'Tên không được để trống' }, {validator: (_, value) => {
+                    if (containsNumbersOrNonUnicodeLetters(value)) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject('Not match');
+                    }
+                   }
+                 , message: "Tên không hợp lệ"}]}
             >
                 <Input/>
             </Form.Item>

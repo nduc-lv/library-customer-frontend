@@ -108,7 +108,7 @@ export default function Record({record, update, toast}: {record: RecordInterface
                 // onClick={() => {router.push(`/bookDetails/${record.book._id}`)}}
                 hoverable
                 style={{display: "flex", flexDirection: "row"}}
-                cover={<div style={{padding: 20}}><Image alt={record.book.name} src={`http://localhost:3000/images/${record.book.image}`} style={{width: 200, height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/></div>}
+                cover={<div style={{padding: 20}}><Image alt={record.book.name} src={`https://library-back-425902.df.r.appspot.com/images/${record.book.image}`} style={{width: 200, height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/></div>}
             >
                 <Meta title={record.book.name} />
                 <div style={{width: "40vw"}} onClick = {() => {router.push(`/bookDetails/${record.book._id}`)}}>
@@ -128,7 +128,7 @@ export default function Record({record, update, toast}: {record: RecordInterface
                         <span style={{fontWeight: "bold"}}>Ngày đặt: </span> {new Date(record.timeStart).toLocaleDateString()}
                     </div>
                     <div style={{marginTop: 10}} className="truncate">
-                        <span style={{fontWeight: "bold"}}>Hạn lấy sách: </span> {new Date(record.timeEnd).toLocaleDateString()}
+                        <span style={{fontWeight: "bold"}}>Hạn: </span> {new Date(record.timeEnd).toLocaleDateString()}
                     </div>
                 </div>
                 {record.status == 'Đặt trước' ? (

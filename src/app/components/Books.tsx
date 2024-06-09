@@ -52,7 +52,7 @@ export default function Books({books}: {books: Array<BookInterface> | undefined}
                         <div key={book._id} onClick = {() => router.push(`/bookDetails/${book._id}`)}>
                             <Card
                                 hoverable
-                                cover={<Image preview={false} alt="bìa sách" src={`http://localhost:3000/images/${book.image}`} style={{height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>}
+                                cover={<Image preview={false} alt="bìa sách" src={`https://library-back-425902.df.r.appspot.com/images/${book.image}`} style={{height: 250}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>}
                                 
                             >
                                 <Meta title={book.name} description={book.authors.map((author) => author.name).join(",")} />

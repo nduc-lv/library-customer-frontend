@@ -34,7 +34,7 @@ export default function ResetPassword({params}:{params:{token: string}}){
         console.log('Failed:', errorInfo);
     };
     useEffect(() => {
-        const key = process.env.NEXT_PUBLIC_SECRET;
+        const key = process.env.NEXT_PUBLIC_SECRET
         if (!key) {
             setValid(curr => false)
         }
@@ -47,9 +47,10 @@ export default function ResetPassword({params}:{params:{token: string}}){
                         console.log(emailToken)
                         throw Error("Token khong hop le")
                     }
-                    // if (user){
-                    //     setEmail(curr => user.email)
-                    // }
+                    if (user){
+                        //@ts-ignore
+                        setEmail(curr => user.email)
+                    }
                     console.log(user)
                 })
             }
@@ -67,7 +68,7 @@ export default function ResetPassword({params}:{params:{token: string}}){
         )
     }
     return (
-        <div className='flex justify-center items-center flex-col'>
+        <div className='flex justify-center items-center flex-col' style={{padding: 100}}>
             <ToastContainer></ToastContainer>
             <div style={{fontWeight: "bold", marginBottom: 10}}>
                 Nhập mật khẩu mới

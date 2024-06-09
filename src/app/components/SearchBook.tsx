@@ -56,7 +56,9 @@ export default function SearchBook(){
       onSelect={onSelect}
       onSearch={handleSearch}
     >
+    
       <Input.Search placeholder="Nhập tên sách, tác giả" enterButton onSearch={onSelect} />
+    
     </AutoComplete>
     </div>
     )

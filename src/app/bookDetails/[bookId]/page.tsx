@@ -91,7 +91,7 @@ export default function BookDetail({params}:{params: {bookId:string}}) {
                 
                 <Card title="Ảnh bìa">
                     <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                    <Image alt="bìa sách" src={`http://localhost:3000/images/${bookDetail.image}`} style={{width: 368, height: 368}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>
+                    <Image alt="bìa sách" src={`https://library-back-425902.df.r.appspot.com/images/${bookDetail.image}`} style={{width: 368, height: 368}} fallback="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_4drL9dKEWM3Xp5Fcn5mEBTD7aXG6g1D17KEIg8wKJI0tIU7Z"/>
                     </div>
                 </Card>
                 <div className="flex flex-col gap-4">

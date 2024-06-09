@@ -94,6 +94,13 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile, toast}: 
         console.log('Failed:', errorInfo);
     };
     console.log(customerInfo.address.split(', ')[0])
+    function containsNumbersOrNonUnicodeLetters(input: string) {
+        // Regular expression to match numbers or non-Unicode letter characters
+        const regex = /[\d`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        
+        // Test the input string against the regular expression
+        return !regex.test(input);
+    }
     return (
         <>
             <Form
@@ -118,14 +125,21 @@ export default function UpdateProfile({customerInfo, setUpdatedProfile, toast}: 
             <Form.Item<FieldType>
                 label="Tên"
                 name="name"
-                rules={[{pattern: /[\p{L}\s]*$/, message: "Ten khong hop le"}]}
+                rules={[{validator: (_, value) => {
+                    if (containsNumbersOrNonUnicodeLetters(value)) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject('Not match');
+                    }
+                   }
+                 , message: "Tên không hợp lệ"}]}
             >
                 <Input defaultValue={customerInfo.name}/>
             </Form.Item>
             <Form.Item<FieldType>
                 label="Số điện thoại"
                 name="phonenumber"
-                rules={[{pattern: /\d{10}/, message: "So dien thoai khong hop le"}]}
+                rules={[{pattern: /^(\d{10}|\d{11})/, message: "So dien thoai khong hop le"}]}
             >
                 <Input defaultValue={customerInfo.phone}/>
             </Form.Item>
